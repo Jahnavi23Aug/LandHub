@@ -1,0 +1,11 @@
+Owner, Location,TractorType,Service,Availability,Contact,Image
+Raju,Payakaraopta,Heavy Tractor,Construction,Available,9876543210,Tractor1.jpg
+Srinu,Tuni,Mini Tractor,Transport,Busy,9876543211,Tractor3.jpg
+Mahesh,Vizag,Mini Tractor,Farming,Busy,9876543232,Tractor2.jpg
+Ganesh,Payakaraopeta,Heavy Tractor,Transport,Available,9876543214,Tractor1.jpg
+Ramu,Payakaraopeta,Mini Tractor,Construction,Busy,9876543215,Tractor3.jpg
+Hari,Tuni,Heavy Tractor,Transport,Available,9876543216,Tractor3.jpg
+Naidu,Kakinada,Mini Tractor,Farming,Busy,9876543217,Tractor2.jpg
+Apparao,Annavaram,Heavy Tractor,Construction,Busy,9876543218,Tractor3.jpg
+Naresh,Vizag,Heavy Tractor,Transport,Available,9876543219,Tractor1.jpg
+Venkatesh,Tuni,Mini Tractor,Farming,Available,9876543201,Tractor2.jpg
