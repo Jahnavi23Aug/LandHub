@@ -172,10 +172,12 @@ elif page=="Tractors":
                 st.markdown(f"[📞 WhatsApp](https://wa.me/{phone})")
 
             # ---- Map ----
-            st.map(pd.DataFrame({
-                "lat":[17.3850],
-                "lon":[78.4867]
-            }))
+            map_location = row.get("Location", "")
+
+if map_location:
+    st.markdown(
+        f"[📍 View Location](https://www.google.com/maps/search/{map_location})"
+    )
 
             # ---- Favorites ----
             if st.button(f"❤️ Save Tractor {i}"):
