@@ -4,261 +4,250 @@ import os
 
 st.set_page_config(page_title="LandHub", layout="wide")
 
-# ---------------- FILE CHECK ---------------- #
+# ---------- FILE CHECK ----------
+for file, cols in {
+    "users.csv":["Username","Password"],
+    "properties.csv":["Owner","Location","Price","Contact","Image"],
+    "tractors.csv":["Owner","TractorType","Location","Service","Availability","Contact"]
+}.items():
+    if not os.path.exists(file):
+        pd.DataFrame(columns=cols).to_csv(file,index=False)
 
-if not os.path.exists("users.csv"):
-    pd.DataFrame(columns=["Username","Password"]).to_csv("users.csv", index=False)
-
-# ---------------- SESSION ---------------- #
-
+# ---------- SESSION ----------
 if "page" not in st.session_state:
-    st.session_state.page = "Home"
+    st.session_state.page="Home"
 
 if "favorites" not in st.session_state:
-    st.session_state.favorites = []
+    st.session_state.favorites=[]
 
-if "user_logged" not in st.session_state:
-    st.session_state.user_logged = False
+if "logged" not in st.session_state:
+    st.session_state.logged=False
 
 if "username" not in st.session_state:
-    st.session_state.username = ""
+    st.session_state.username=""
 
-# ---------------- NAVBAR ---------------- #
-
-col1, col2, col3, col4, col5 = st.columns([3,2,2,2,2])
+# ---------- NAVBAR ----------
+col1,col2,col3,col4,col5 = st.columns([3,2,2,2,2])
 
 with col1:
-    st.markdown("### 🌾 LandHub")
+    st.markdown("## 🌾 LandHub")
 
 with col2:
     if st.button("Home"):
-        st.session_state.page = "Home"
+        st.session_state.page="Home"
 
 with col3:
     if st.button("Real Estate"):
-        st.session_state.page = "Properties"
+        st.session_state.page="Properties"
 
 with col4:
     if st.button("Tractor Services"):
-        st.session_state.page = "Tractors"
+        st.session_state.page="Tractors"
 
 with col5:
     if st.button("Favorites"):
-        st.session_state.page = "Favorites"
+        st.session_state.page="Favorites"
 
-page = st.session_state.page
-
+page=st.session_state.page
 st.write("---")
 
-# ---------------- USER LOGIN / SIGNUP ---------------- #
-
+# ---------- USER LOGIN ----------
 st.sidebar.title("👤 User Account")
+option=st.sidebar.selectbox("Choose Option",["Login","Sign Up"])
 
-option = st.sidebar.selectbox("Choose Option", ["Login", "Sign Up"])
+if option=="Sign Up":
 
-if option == "Sign Up":
-
-    new_user = st.sidebar.text_input("Create Username")
-    new_pass = st.sidebar.text_input("Create Password", type="password")
+    new_user=st.sidebar.text_input("Username")
+    new_pass=st.sidebar.text_input("Password",type="password")
 
     if st.sidebar.button("Register"):
 
-        users = pd.read_csv("users.csv")
-        users.columns = users.columns.str.strip()
+        users=pd.read_csv("users.csv")
 
         if new_user in users["Username"].values:
             st.sidebar.error("Username already exists")
 
         else:
-            new_data = pd.DataFrame([[new_user, new_pass]], columns=["Username","Password"])
-            new_data.to_csv("users.csv", mode="a", header=False, index=False)
+            pd.DataFrame([[new_user,new_pass]],
+            columns=["Username","Password"]).to_csv(
+            "users.csv",mode="a",header=False,index=False)
 
-            st.sidebar.success("Account created! Please login.")
+            st.sidebar.success("Account Created")
 
-if option == "Login":
+if option=="Login":
 
-    username = st.sidebar.text_input("Username")
-    password = st.sidebar.text_input("Password", type="password")
+    username=st.sidebar.text_input("Username")
+    password=st.sidebar.text_input("Password",type="password")
 
     if st.sidebar.button("Login"):
 
-        users = pd.read_csv("users.csv")
-        users.columns = users.columns.str.strip()
+        users=pd.read_csv("users.csv")
 
-        users["Username"] = users["Username"].astype(str).str.strip()
-        users["Password"] = users["Password"].astype(str).str.strip()
-
-        username = username.strip()
-        password = password.strip()
-
-        user = users[
-            (users["Username"] == username) &
-            (users["Password"] == password)
+        user=users[
+            (users["Username"].astype(str).str.strip()==username.strip()) &
+            (users["Password"].astype(str).str.strip()==password.strip())
         ]
 
         if not user.empty:
-            st.session_state.user_logged = True
-            st.session_state.username = username
+            st.session_state.logged=True
+            st.session_state.username=username
             st.sidebar.success(f"Welcome {username}")
+
         else:
-            st.sidebar.error("Invalid login")
+            st.sidebar.error("Invalid Login")
 
-if st.session_state.user_logged:
+if st.session_state.logged:
 
-    st.sidebar.write(f"Logged in as: **{st.session_state.username}**")
+    st.sidebar.write(f"Logged in as **{st.session_state.username}**")
 
     if st.sidebar.button("Logout"):
-        st.session_state.user_logged = False
-        st.session_state.username = ""
+        st.session_state.logged=False
+        st.session_state.username=""
 
-# ---------------- HOME ---------------- #
+# ---------- HOME ----------
+if page=="Home":
 
-if page == "Home":
-
-    st.title("🏡 Real Estate & 🚜 Tractor Booking Platform")
+    st.title("🏡 Real Estate & 🚜 Tractor Platform")
 
     st.markdown("""
-    <div style="text-align:center;padding:40px;background:#f5f7fa;border-radius:10px;">
-    <h2>Find Properties & Nearby Tractor Services</h2>
-    <p>Everything You Need — Homes, Land & Tractors!</p>
+    <div style="background:#f5f7fa;padding:30px;border-radius:10px;text-align:center">
+    <h2>Find Land, Houses & Tractor Services Near You</h2>
     </div>
-    """, unsafe_allow_html=True)
+    """,unsafe_allow_html=True)
 
-    col1, col2, col3 = st.columns(3)
+    st.image([
+        "House1 (1).jpeg",
+        "Land1 (1).jpg",
+        "Appartment2 (1).jpg"
+    ])
 
-    with col1:
-        st.metric("🏡 Properties Listed", "100+")
+    col1,col2,col3=st.columns(3)
 
-    with col2:
-        st.metric("🚜 Tractors Available", "50+")
+    col1.metric("🏡 Properties","100+")
+    col2.metric("🚜 Tractors","50+")
+    col3.metric("😊 Clients","500+")
 
-    with col3:
-        st.metric("😊 Happy Clients", "500+")
+# ---------- TRACTORS ----------
+elif page=="Tractors":
 
-# ---------------- TRACTORS ---------------- #
+    st.header("🚜 Tractor Services")
 
-elif page == "Tractors":
+    df=pd.read_csv("tractors.csv")
 
-    st.header("🚜 Tractor NearBy")
+    search=st.text_input("Search Location")
 
-    df = pd.read_csv("tractors.csv")
-    df.columns = df.columns.str.strip()
+    if search:
+        df=df[df["Location"].str.contains(search,case=False,na=False)]
 
-    location = st.text_input("Search by Location")
+    cols=st.columns(3)
 
-    if location:
-        df = df[df["Location"].str.contains(location, case=False, na=False)]
+    for i,row in df.iterrows():
 
-    cols = st.columns(3)
+        with cols[i%3]:
 
-    for i, row in df.iterrows():
+            st.subheader(row["TractorType"])
 
-        with cols[i % 3]:
+            st.write("👤 Owner:",row["Owner"])
+            st.write("📍 Location:",row["Location"])
+            st.write("🛠 Service:",row["Service"])
+            st.write("🟢 Availability:",row["Availability"])
 
-            st.subheader(row.get("TractorType", "Tractor"))
+            phone=str(row["Contact"])
 
-            st.write("👤 Owner:", row.get("Owner", "N/A"))
-            st.write("📍 Location:", row.get("Location", "N/A"))
-            st.write("🛠 Service:", row.get("Service", "N/A"))
-            st.write("🟢 Availability:", row.get("Availability", "N/A"))
+            st.markdown(f"[📞 WhatsApp](https://wa.me/{phone})")
 
-            phone = str(row.get("Contact", ""))
-
-            if phone:
-                st.markdown(f"[📞 WhatsApp Owner](https://wa.me/{phone})")
-
-            map_location = row.get("Location", "")
-
-            if map_location:
-                st.markdown(f"[📍 View Location](https://www.google.com/maps/search/{map_location})")
+            st.map(pd.DataFrame({
+                "lat":[17.3850],
+                "lon":[78.4867]
+            }))
 
             if st.button(f"❤️ Save Tractor {i}"):
 
                 st.session_state.favorites.append({
-                    "type": "Tractor",
-                    "location": row.get("Location"),
-                    "owner": row.get("Owner")
+                    "type":"Tractor",
+                    "location":row["Location"],
+                    "owner":row["Owner"]
                 })
 
-                st.success("Saved to favorites!")
-
-# ---------------- PROPERTIES ---------------- #
-
-elif page == "Properties":
+# ---------- PROPERTIES ----------
+elif page=="Properties":
 
     st.header("🏡 Farm Properties")
 
-    df = pd.read_csv("properties.csv")
-    df.columns = df.columns.str.strip()
+    df=pd.read_csv("properties.csv")
 
-    location = st.text_input("Search Property Location")
+    st.write(f"Total Properties: **{len(df)}**")
 
-    if location:
-        df = df[df["Location"].str.contains(location, case=False, na=False)]
+    search=st.text_input("Search Location")
 
-    cols = st.columns(3)
+    price_filter=st.selectbox(
+        "Price Filter",
+        ["All","Below 10L","10L-20L","Above 20L"]
+    )
 
-    for i, row in df.iterrows():
+    if search:
+        df=df[df["Location"].str.contains(search,case=False,na=False)]
 
-        with cols[i % 3]:
+    cols=st.columns(3)
 
-            image_name = str(row.get("Image", "")).strip()
-            image_path = image_name
+    for i,row in df.iterrows():
 
-            if image_name != "" and os.path.exists(image_path):
-                st.image(image_path, use_container_width=True)
+        with cols[i%3]:
+
+            st.markdown("""
+            <div style="background:#fafafa;padding:15px;border-radius:10px;
+            box-shadow:0px 2px 6px rgba(0,0,0,0.1)">
+            """,unsafe_allow_html=True)
+
+            image=row["Image"]
+
+            if image!="" and os.path.exists(image):
+                st.image(image,use_container_width=True)
+
             else:
-                st.image(
-                    "https://via.placeholder.com/400x250?text=No+Image+Available",
-                    use_container_width=True
-                )
+                st.image("https://via.placeholder.com/400x250")
 
-            st.write("📍 Location:", row.get("Location"))
-            st.write("💰 Price:", row.get("Price", "N/A"))
-            st.write("📞 Contact:", row.get("Contact", "N/A"))
+            st.subheader(row["Location"])
 
-            phone = str(row.get("Contact", ""))
+            st.write("💰",row["Price"])
+            st.write("📞",row["Contact"])
 
-            if phone:
-                st.markdown(f"[📞 WhatsApp Owner](https://wa.me/{phone})")
+            phone=str(row["Contact"])
 
-            map_location = row.get("Location", "")
+            st.markdown(f"[📞 WhatsApp](https://wa.me/{phone})")
 
-            if map_location:
-                st.markdown(
-                    f"[📍 View Location](https://www.google.com/maps/search/{map_location})"
-                )
+            st.markdown(
+            f"[📍 Map](https://www.google.com/maps/search/{row['Location']})"
+            )
 
             if st.button(f"❤️ Save Property {i}"):
 
                 st.session_state.favorites.append({
-                    "type": "Property",
-                    "location": row.get("Location"),
-                    "price": row.get("Price")
+                    "type":"Property",
+                    "location":row["Location"],
+                    "price":row["Price"]
                 })
 
-                st.success("Saved to favorites!")
+            st.markdown("</div>",unsafe_allow_html=True)
 
-# ---------------- FAVORITES ---------------- #
+# ---------- FAVORITES ----------
+elif page=="Favorites":
 
-elif page == "Favorites":
+    st.header("❤️ Favorites")
 
-    st.header("❤️ Saved Listings")
-
-    if len(st.session_state.favorites) == 0:
-        st.info("No favorites yet")
+    if len(st.session_state.favorites)==0:
+        st.info("No saved items")
 
     for item in st.session_state.favorites:
 
-        if item["type"] == "Property":
-            st.write(f"🏡 Property - {item['location']} | 💰 {item['price']}")
+        if item["type"]=="Property":
+            st.write(f"🏡 {item['location']} | 💰 {item['price']}")
 
-        if item["type"] == "Tractor":
-            st.write(f"🚜 Tractor - {item['location']} | Owner: {item['owner']}")
+        if item["type"]=="Tractor":
+            st.write(f"🚜 {item['location']} | Owner {item['owner']}")
 
-# ---------------- ADD PROPERTY ---------------- #
-
-if st.session_state.user_logged:
+# ---------- ADD PROPERTY ----------
+if st.session_state.logged:
 
     st.sidebar.write("---")
 
@@ -266,65 +255,60 @@ if st.session_state.user_logged:
 
         st.header("Add Property")
 
-        owner = st.text_input("Owner Name")
-        location = st.text_input("Location")
-        price = st.text_input("Price")
-        contact = st.text_input("Contact Number")
+        owner=st.text_input("Owner")
+        location=st.text_input("Location")
+        price=st.text_input("Price")
+        contact=st.text_input("Contact")
 
-        image_file = st.file_uploader("Upload Property Image")
+        image=st.file_uploader("Upload Image")
 
-        image_name = ""
+        image_name=""
 
-        if image_file is not None:
+        if image:
 
             if not os.path.exists("images"):
                 os.makedirs("images")
 
-            image_name = image_file.name
+            image_name=image.name
 
-            with open(os.path.join("images", image_name), "wb") as f:
-                f.write(image_file.getbuffer())
+            with open(os.path.join("images",image_name),"wb") as f:
+                f.write(image.getbuffer())
 
-        if st.button("Add Property"):
+        if st.button("Submit"):
 
-            new_data = pd.DataFrame([{
-                "Owner": owner,
-                "Location": location,
-                "Price": price,
-                "Contact": contact,
-                "Image": image_name
-            }])
+            pd.DataFrame([{
+                "Owner":owner,
+                "Location":location,
+                "Price":price,
+                "Contact":contact,
+                "Image":image_name
+            }]).to_csv("properties.csv",mode="a",header=False,index=False)
 
-            new_data.to_csv("properties.csv", mode="a", header=False, index=False)
+            st.success("Property Added")
 
-            st.success("Property Added Successfully!")
-
-# ---------------- ADD TRACTOR ---------------- #
-
-if st.session_state.user_logged:
+# ---------- ADD TRACTOR ----------
+if st.session_state.logged:
 
     if st.sidebar.button("➕ Add Tractor"):
 
-        st.header("Add Tractor Service")
+        st.header("Add Tractor")
 
-        owner = st.text_input("Owner Name")
-        tractor = st.text_input("Tractor Type")
-        location = st.text_input("Location")
-        service = st.text_input("Service Type")
-        availability = st.selectbox("Availability", ["Available", "Busy"])
-        contact = st.text_input("Contact Number")
+        owner=st.text_input("Owner")
+        tractor=st.text_input("Tractor Type")
+        location=st.text_input("Location")
+        service=st.text_input("Service")
+        availability=st.selectbox("Availability",["Available","Busy"])
+        contact=st.text_input("Contact")
 
-        if st.button("Add Tractor"):
+        if st.button("Submit Tractor"):
 
-            new_data = pd.DataFrame([{
-                "Owner": owner,
-                "TractorType": tractor,
-                "Location": location,
-                "Service": service,
-                "Availability": availability,
-                "Contact": contact
-            }])
+            pd.DataFrame([{
+                "Owner":owner,
+                "TractorType":tractor,
+                "Location":location,
+                "Service":service,
+                "Availability":availability,
+                "Contact":contact
+            }]).to_csv("tractors.csv",mode="a",header=False,index=False)
 
-            new_data.to_csv("tractors.csv", mode="a", header=False, index=False)
-
-            st.success("Tractor Service Added Successfully!")
+            st.success("Tractor Added")
