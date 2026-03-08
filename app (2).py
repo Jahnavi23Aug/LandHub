@@ -173,11 +173,9 @@ elif page=="Tractors":
 
             # ---- Map ----
             map_location = row.get("Location", "")
-
-if map_location:
-    st.markdown(
-        f"[📍 View Location](https://www.google.com/maps/search/{map_location})"
-    )
+            if map_location:
+                 st.markdown(
+                     f"[📍 View Location](https://www.google.com/maps/search/{map_location})")
 
             # ---- Favorites ----
             if st.button(f"❤️ Save Tractor {i}"):
