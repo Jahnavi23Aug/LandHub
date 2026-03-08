@@ -202,12 +202,14 @@ elif page == "Properties":
     for i, row in df.iterrows():
 
         with cols[i % 3]:
+            
 
-            image_name = row.get("Image", "")
-            image_path = f"images/{image_name}"
-
-            if image_name:
-                st.image(image_path, use_container_width=True)
+           image_name = str(row.get("Image", "")).strip()
+            image_path = os.path.join("images", image_name)
+            if image_name and os.path.exists(image_path):
+                 st.image(image_path, use_container_width=True)
+            else:
+                 st.image("https://via.placeholder.com/300x200?text=No+Image")
 
             st.write("📍 Location:", row.get("Location"))
             st.write("💰 Price:", row.get("Price", "N/A"))
