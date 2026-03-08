@@ -147,10 +147,10 @@ elif page=="Tractors":
 
             st.subheader(row["TractorType"])
 
-            st.write("👤 Owner:",row["Owner"])
-            st.write("📍 Location:",row["Location"])
-            st.write("🛠 Service:",row["Service"])
-            st.write("🟢 Availability:",row["Availability"])
+            st.write("👤 Owner:", row.get("Owner","N/A"))
+            st.write("📍 Location:", row.get("Location","N/A"))
+            st.write("🛠 Service:", row.get("Service","N/A"))
+            st.write("🟢 Availability:", row.get("Availability","N/A"))
 
             phone=str(row["Contact"])
 
