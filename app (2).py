@@ -148,7 +148,7 @@ elif page=="Tractors":
 
             # ---- Image ----
             image_name = str(row.get("Image","")).strip()
-            image_path = os.path.join("images", image_name)
+            image_path = image_name
 
             if image_name != "" and os.path.exists(image_path):
                 st.image(image_path, use_container_width=True)
