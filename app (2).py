@@ -116,9 +116,9 @@ if page=="Home":
     """,unsafe_allow_html=True)
 
     st.image([
-        "House1 (1).jpeg",
-        "Land1 (1).jpg",
-        "Appartment2 (1).jpg"
+        "https://images.unsplash.com/photo-1560185007-c5ca9d2c014d",
+        "https://images.unsplash.com/photo-1500382017468-9049fed747ef",
+        "https://images.unsplash.com/photo-1572120360610-d971b9d7767c"
     ])
 
     col1,col2,col3=st.columns(3)
