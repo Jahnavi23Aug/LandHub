@@ -85,7 +85,6 @@ if option == "Login":
         users = pd.read_csv("users.csv")
         users.columns = users.columns.str.strip()
 
-        # remove spaces
         users["Username"] = users["Username"].astype(str).str.strip()
         users["Password"] = users["Password"].astype(str).str.strip()
 
@@ -202,14 +201,17 @@ elif page == "Properties":
     for i, row in df.iterrows():
 
         with cols[i % 3]:
-            
 
-           image_name = str(row.get("Image", "")).strip()
+            image_name = str(row.get("Image", "")).strip()
             image_path = os.path.join("images", image_name)
-            if image_name and os.path.exists(image_path):
-                 st.image(image_path, use_container_width=True)
+
+            if image_name != "" and os.path.exists(image_path):
+                st.image(image_path, use_container_width=True)
             else:
-                 st.image("https://via.placeholder.com/300x200?text=No+Image")
+                st.image(
+                    "https://via.placeholder.com/400x250?text=No+Image+Available",
+                    use_container_width=True
+                )
 
             st.write("📍 Location:", row.get("Location"))
             st.write("💰 Price:", row.get("Price", "N/A"))
@@ -223,7 +225,9 @@ elif page == "Properties":
             map_location = row.get("Location", "")
 
             if map_location:
-                st.markdown(f"[📍 View Location](https://www.google.com/maps/search/{map_location})")
+                st.markdown(
+                    f"[📍 View Location](https://www.google.com/maps/search/{map_location})"
+                )
 
             if st.button(f"❤️ Save Property {i}"):
 
