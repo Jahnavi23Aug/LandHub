@@ -206,7 +206,7 @@ elif page == "Properties":
             image_name = row.get("Image", "")
             image_path = f"images/{image_name}"
 
-            if image_name and os.path.exists(image_path):
+            if image_name:
                 st.image(image_path, use_container_width=True)
 
             st.write("📍 Location:", row.get("Location"))
