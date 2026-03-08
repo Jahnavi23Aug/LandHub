@@ -132,42 +132,61 @@ elif page=="Tractors":
 
     st.header("🚜 Tractor Services")
 
-    df=pd.read_csv("tractors.csv")
+    df = pd.read_csv("tractors.csv")
+    df.columns = df.columns.str.strip()
 
-    search=st.text_input("Search Location")
+    search = st.text_input("Search Location")
 
     if search:
-        df=df[df["Location"].str.contains(search,case=False,na=False)]
+        df = df[df["Location"].str.contains(search, case=False, na=False)]
 
-    cols=st.columns(3)
+    cols = st.columns(3)
 
-    for i,row in df.iterrows():
+    for i, row in df.iterrows():
 
-        with cols[i%3]:
+        with cols[i % 3]:
 
-            st.subheader(row["TractorType"])
+            # ---- Image ----
+            image_name = str(row.get("Image","")).strip()
+            image_path = os.path.join("images", image_name)
+
+            if image_name != "" and os.path.exists(image_path):
+                st.image(image_path, use_container_width=True)
+            else:
+                st.image(
+                    "https://via.placeholder.com/400x250?text=Tractor+Service",
+                    use_container_width=True
+                )
+
+            # ---- Tractor Info ----
+            st.subheader(row.get("TractorType","Tractor"))
 
             st.write("👤 Owner:", row.get("Owner","N/A"))
             st.write("📍 Location:", row.get("Location","N/A"))
             st.write("🛠 Service:", row.get("Service","N/A"))
             st.write("🟢 Availability:", row.get("Availability","N/A"))
 
-            phone=str(row["Contact"])
+            phone = str(row.get("Contact",""))
 
-            st.markdown(f"[📞 WhatsApp](https://wa.me/{phone})")
+            if phone:
+                st.markdown(f"[📞 WhatsApp](https://wa.me/{phone})")
 
+            # ---- Map ----
             st.map(pd.DataFrame({
                 "lat":[17.3850],
                 "lon":[78.4867]
             }))
 
+            # ---- Favorites ----
             if st.button(f"❤️ Save Tractor {i}"):
 
                 st.session_state.favorites.append({
                     "type":"Tractor",
-                    "location":row["Location"],
-                    "owner":row["Owner"]
+                    "location":row.get("Location"),
+                    "owner":row.get("Owner")
                 })
+
+                st.success("Saved to favorites!")
 
 # ---------- PROPERTIES ----------
 elif page=="Properties":
